@@ -3,27 +3,18 @@
 console.log("hello from type");
 document.addEventListener('DOMContentLoaded', () => {
     cargarProductos();
-    actualizarCarrito();
 });
+const carritoContador = [];
 function actualizarCarrito() {
     const carritoSpan = document.getElementById('carrito');
-    let carritoContador = [];
     if (carritoSpan) {
-        const contentCarrito = carritoSpan.textContent;
+        let contentCarrito = carritoSpan.textContent;
         if (contentCarrito) {
             let numeroCarrito = parseInt(contentCarrito);
             numeroCarrito = carritoContador.length;
+            carritoSpan.textContent = numeroCarrito.toString();
         }
     }
-    let addToCartButtons = document.querySelectorAll(".btn");
-    //     for(let button of addToCartButtons){
-    //         button.addEventListener("click", () => {
-    //         carritoContador.push()
-    //         if (carritoSpan) {
-    //             carritoSpan.innerText = numeroCarrito.toString();
-    //           }
-    //         });
-    //     }
 }
 //método creación de carta Producto con el HTML siguiente (falta la img):
 function createProductCard(product) {
@@ -53,6 +44,8 @@ function createProductCard(product) {
     addToCartButton.classList.add("btn", "btn-primary");
     addToCartButton.href = "#";
     addToCartButton.textContent = "Add to Cart";
+    addToCartButton.setAttribute("data-product-id", product.id.toString());
+    addToCartButton.addEventListener("click", handleAddToCart);
     cardBody.appendChild(addToCartButton);
     card.appendChild(cardBody);
     return card;
@@ -79,12 +72,22 @@ const products = [
 //El for of lo hacemos para iterar sobre los Productos y crear cada producto y meterlo como hijo en el contenedor
 function cargarProductos() {
     const productContainer = document.getElementById("product-container");
-    console.log("hola estoy en cargar");
     if (productContainer) {
         for (const product of products) {
             const card = createProductCard(product);
             productContainer.appendChild(card);
-            console.log(product.title);
+        }
+    }
+}
+function handleAddToCart(event) {
+    const button = event.target;
+    const productId = button.getAttribute("data-product-id");
+    if (productId) {
+        const selectedProduct = products.find(product => product.id.toString() === productId);
+        if (selectedProduct) {
+            console.log("Producto seleccionado:", selectedProduct.title);
+            carritoContador.push(selectedProduct); // Agregar el producto a la lista de productos en el carrito
+            actualizarCarrito(); // Actualizar la visualización del carrito
         }
     }
 }
